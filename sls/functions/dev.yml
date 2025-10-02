@@ -1,0 +1,8 @@
+deleteRolePermissions:
+  handler: src/main/functions/dev/deleteRolePermissions.handler
+  events:
+    - httpApi:
+        method: GET
+        path: /dev
+        #authorizer:
+        #  name: CognitoAuthorizer
