@@ -7,6 +7,15 @@ createContract:
         authorizer:
           name: CognitoAuthorizer
 
+listContracts:
+  handler: src/main/functions/contracts/listContracts.handler
+  events:
+    - httpApi:
+        path: /contracts
+        method: GET
+        authorizer:
+          name: CognitoAuthorizer
+
 updateContract:
   handler: src/main/functions/contracts/updateContract.handler
   events:

@@ -56,6 +56,7 @@ functions:
   - ${file(./sls/functions/dev.yml)}
   - ${file(./sls/functions/clients.yml)}
   - ${file(./sls/functions/contracts.yml)}
+  - ${file(./sls/functions/rigs.yml)}
 
 resources:
   - ${file(./sls/resources/UserPool.yml)}

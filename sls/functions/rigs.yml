@@ -1,0 +1,17 @@
+createRig:
+  handler: src/main/functions/rigs/createRig.handler
+  events:
+    - httpApi:
+        method: POST
+        path: /rigs
+        authorizer:
+          name: CognitoAuthorizer
+
+updateRig:
+  handler: src/main/functions/rigs/updateRig.handler
+  events:
+    - httpApi:
+        path: /rigs/{rigId}
+        method: PATCH
+        authorizer:
+          name: CognitoAuthorizer
