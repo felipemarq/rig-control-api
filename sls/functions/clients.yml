@@ -1,0 +1,17 @@
+createClient:
+  handler: src/main/functions/clients/createClient.handler
+  events:
+    - httpApi:
+        method: POST
+        path: /clients
+        authorizer:
+          name: CognitoAuthorizer
+
+updateClient:
+  handler: src/main/functions/clients/updateClient.handler
+  events:
+    - httpApi:
+        path: /clients/{clientId}
+        method: PATCH
+        authorizer:
+          name: CognitoAuthorizer
