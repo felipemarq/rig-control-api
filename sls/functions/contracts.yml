@@ -1,0 +1,17 @@
+createContract:
+  handler: src/main/functions/contracts/createContract.handler
+  events:
+    - httpApi:
+        method: POST
+        path: /contracts
+        authorizer:
+          name: CognitoAuthorizer
+
+updateContract:
+  handler: src/main/functions/contracts/updateContract.handler
+  events:
+    - httpApi:
+        path: /contracts/{contractId}
+        method: PATCH
+        authorizer:
+          name: CognitoAuthorizer

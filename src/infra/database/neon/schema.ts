@@ -56,9 +56,9 @@ export const ufEnum = pgEnum("uf", [
 // Status genérico para entidades versionáveis/ativas
 // 'draft' = rascunho, 'active' = em uso, 'archived' = desativado/legado.
 export const statusCommon = pgEnum("status_common", [
-  "draft",
-  "active",
-  "archived",
+  "DRAFT",
+  "ACTIVE",
+  "ARCHIVED",
 ]);
 
 // Nível de acesso padronizado (RBAC e ACL por sonda)
@@ -192,7 +192,7 @@ export const contracts = pgTable(
       .notNull()
       .references(() => clients.id, { onDelete: "restrict" }), // FK → clients
     code: text("code").notNull(), // Código interno do contrato. Ex.: 'CT-2025-001'
-    status: statusCommon("status").default("active").notNull(), // 'active' = vigente
+    status: statusCommon("status").default("ACTIVE").notNull(), // 'active' = vigente
     startAt: date("start_at").notNull(), // Início de vigência. Ex.: '2025-01-01'
     endAt: date("end_at"), // Fim (opcional). Ex.: '2026-12-31'
     createdAt: timestamp("created_at", { withTimezone: true })
