@@ -1,11 +1,12 @@
 // database.ts
 import { Injectable } from "@kernel/decorators/Injectable";
-import { drizzle, NeonHttpDatabase } from "drizzle-orm/neon-http";
+import { drizzle, NeonDatabase } from "drizzle-orm/neon-serverless";
+import { Pool, neonConfig } from "@neondatabase/serverless";
 import { AppConfig } from "@shared/config/AppConfig";
 
 @Injectable()
 export class DatabaseService {
-  public readonly db: NeonHttpDatabase;
+  public readonly db: NeonDatabase;
 
   constructor(private readonly config: AppConfig) {
     const url = this.config.db?.url;
@@ -13,7 +14,11 @@ export class DatabaseService {
       throw new Error("DATABASE_URL não configurada em AppConfig.database.url");
     }
 
-    // Instância do Drizzle sobre o cliente HTTP do Neon
-    this.db = drizzle(url);
+    // Neon serverless client com cache de conexão para permitir transações
+    neonConfig.fetchConnectionCache = true;
+
+    const pool = new Pool({ connectionString: url });
+
+    this.db = drizzle(pool);
   }
 }
