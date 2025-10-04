@@ -23,7 +23,7 @@ export class UpdateRigController extends Controller<
   > {
     const { rigId } = params;
     const { clientId, isActive, name, timezone, uf, baseId, contractId } = body;
-    const rig = await this.updateRigUSeCase.execute({
+    const rig = await this.updateRigUSeCase.execute(userId, {
       rigId,
       clientId,
       isActive,

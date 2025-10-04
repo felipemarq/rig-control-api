@@ -1,12 +1,34 @@
+import { MODULE_KEYS } from "@application/constants/moduleKeys";
+import { NotFoundException } from "@application/errors/http/NotFoundException";
+import { PermissionService } from "@application/services/PermissionService";
+import { RoleService } from "@application/services/RoleService";
 import { RigRepository } from "@infra/database/neon/repositories/RigRepository";
 import { Injectable } from "@kernel/decorators/Injectable";
-import { NotFoundException } from "@application/errors/http/NotFoundException";
 
 @Injectable()
 export class DeleteRigUseCase {
-  constructor(private readonly rigRepository: RigRepository) {}
+  constructor(
+    private readonly rigRepository: RigRepository,
+    private readonly roleService: RoleService,
+    private readonly permissionService: PermissionService
+  ) {}
 
-  async execute({ rigId }: DeleteRigUseCase.Input): Promise<void> {
+  async execute(
+    actingUserId: string,
+    { rigId }: DeleteRigUseCase.Input
+  ): Promise<void> {
+    await this.roleService.ensureModuleAccess(
+      MODULE_KEYS.RIGS,
+      "admin",
+      actingUserId
+    );
+
+    await this.permissionService.ensureRigAccess(
+      actingUserId,
+      rigId,
+      "admin"
+    );
+
     const deleted = await this.rigRepository.delete(rigId);
 
     if (!deleted) {

@@ -1,15 +1,34 @@
-import { Injectable } from "@kernel/decorators/Injectable";
-import { UserRigAccessRepository } from "@infra/database/neon/repositories/UserRigAccessRepository";
+import { MODULE_KEYS } from "@application/constants/moduleKeys";
 import { NotFoundException } from "@application/errors/http/NotFoundException";
+import { PermissionService } from "@application/services/PermissionService";
+import { RoleService } from "@application/services/RoleService";
+import { UserRigAccessRepository } from "@infra/database/neon/repositories/UserRigAccessRepository";
+import { Injectable } from "@kernel/decorators/Injectable";
 
 @Injectable()
 export class DeleteUserRigAccessUseCase {
-  constructor(private readonly repo: UserRigAccessRepository) {}
+  constructor(
+    private readonly repo: UserRigAccessRepository,
+    private readonly roleService: RoleService,
+    private readonly permissionService: PermissionService
+  ) {}
 
   async execute(
-    _actingUserId: string,
+    actingUserId: string,
     input: DeleteUserRigAccessUseCase.Input
   ): Promise<void> {
+    await this.roleService.ensureModuleAccess(
+      MODULE_KEYS.RIG_ACCESS,
+      "admin",
+      actingUserId
+    );
+
+    await this.permissionService.ensureRigAccess(
+      actingUserId,
+      input.rigId,
+      "admin"
+    );
+
     const deleted = await this.repo.revoke(input.userId, input.rigId);
 
     if (!deleted) {

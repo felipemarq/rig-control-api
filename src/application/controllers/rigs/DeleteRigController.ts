@@ -10,6 +10,7 @@ export class DeleteRigController extends Controller<"private", void> {
   }
 
   protected override async handle({
+    userId,
     params,
   }: Controller.Request<
     "private",
@@ -19,7 +20,7 @@ export class DeleteRigController extends Controller<"private", void> {
   >): Promise<Controller.Response<void>> {
     const { rigId } = updateRigParamsSchema.parse(params ?? {});
 
-    await this.deleteRigUseCase.execute({ rigId });
+    await this.deleteRigUseCase.execute(userId, { rigId });
 
     return {
       statusCode: 204,
