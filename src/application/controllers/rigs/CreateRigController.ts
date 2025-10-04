@@ -22,7 +22,7 @@ export class CreateRigController extends Controller<
     Controller.Response<CreateRigController.Response>
   > {
     const { isActive, name, timezone, uf, clientId, baseId, contractId } = body;
-    const rig = await this.createRigUseCase.execute({
+    const rig = await this.createRigUseCase.execute(userId, {
       isActive,
       name,
       timezone,

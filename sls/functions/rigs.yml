@@ -7,11 +7,38 @@ createRig:
         authorizer:
           name: CognitoAuthorizer
 
+listRigs:
+  handler: src/main/functions/rigs/listRigs.handler
+  events:
+    - httpApi:
+        method: GET
+        path: /rigs
+        authorizer:
+          name: CognitoAuthorizer
+
+getRig:
+  handler: src/main/functions/rigs/getRig.handler
+  events:
+    - httpApi:
+        method: GET
+        path: /rigs/{rigId}
+        authorizer:
+          name: CognitoAuthorizer
+
 updateRig:
   handler: src/main/functions/rigs/updateRig.handler
   events:
     - httpApi:
         path: /rigs/{rigId}
         method: PATCH
+        authorizer:
+          name: CognitoAuthorizer
+
+deleteRig:
+  handler: src/main/functions/rigs/deleteRig.handler
+  events:
+    - httpApi:
+        method: DELETE
+        path: /rigs/{rigId}
         authorizer:
           name: CognitoAuthorizer

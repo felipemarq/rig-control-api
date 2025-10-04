@@ -1,0 +1,53 @@
+createEfficiencyDay:
+  handler: src/main/functions/efficiencyDays/createEfficiencyDay.handler
+  events:
+    - httpApi:
+        method: POST
+        path: /rigs/{rigId}/efficiency-days
+        authorizer:
+          name: CognitoAuthorizer
+
+listEfficiencyDays:
+  handler: src/main/functions/efficiencyDays/listEfficiencyDays.handler
+  events:
+    - httpApi:
+        method: GET
+        path: /rigs/{rigId}/efficiency-days
+        authorizer:
+          name: CognitoAuthorizer
+
+getEfficiencyDay:
+  handler: src/main/functions/efficiencyDays/getEfficiencyDay.handler
+  events:
+    - httpApi:
+        method: GET
+        path: /rigs/{rigId}/efficiency-days/{localDate}
+        authorizer:
+          name: CognitoAuthorizer
+
+updateEfficiencyDay:
+  handler: src/main/functions/efficiencyDays/updateEfficiencyDay.handler
+  events:
+    - httpApi:
+        method: PUT
+        path: /rigs/{rigId}/efficiency-days/{localDate}
+        authorizer:
+          name: CognitoAuthorizer
+
+updateEfficiencyDayStatus:
+  handler: src/main/functions/efficiencyDays/updateEfficiencyDayStatus.handler
+  events:
+    - httpApi:
+        method: PATCH
+        path: /rigs/{rigId}/efficiency-days/{localDate}/status
+        authorizer:
+          name: CognitoAuthorizer
+
+deleteEfficiencyDay:
+  handler: src/main/functions/efficiencyDays/deleteEfficiencyDay.handler
+  events:
+    - httpApi:
+        method: DELETE
+        path: /rigs/{rigId}/efficiency-days/{localDate}
+        authorizer:
+          name: CognitoAuthorizer
