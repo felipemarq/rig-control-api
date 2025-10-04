@@ -8,7 +8,7 @@ export type ListContractItem = {
     createdAt?: Date | undefined;
     updatedAt?: Date | undefined;
     deletedAt?: Date | null | undefined;
-  };
+  } | null;
   id?: string | undefined;
   clientId: string;
   code: string;

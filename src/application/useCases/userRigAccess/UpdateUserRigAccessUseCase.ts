@@ -8,7 +8,7 @@ export class UpdateUserRigAccessUseCase {
   constructor(private readonly repo: UserRigAccessRepository) {}
 
   async execute(
-    actingUserId: string,
+    _actingUserId: string,
     input: UpdateUserRigAccessBody
   ): Promise<UserRigAccess> {
     // validar permissão do actingUserId

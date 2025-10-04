@@ -2,9 +2,14 @@
 import { Injectable } from "@kernel/decorators/Injectable";
 import { DatabaseService } from "..";
 import { userRigAccess, users, rigs } from "../schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { UserRigAccessItem } from "../items/UserRigAccessItem";
 import { UserRigAccess } from "@application/entities/UserRigAcess";
+import { Rig } from "@application/entities/Rig";
+import {
+  ListRigUsersItem,
+  ListUserRigAccessItem,
+} from "@application/queries/types/UserRigAccessItems";
 
 @Injectable()
 export class UserRigAccessRepository {
@@ -48,12 +53,15 @@ export class UserRigAccessRepository {
     return UserRigAccessItem.fromRow(updated);
   }
 
-  async revoke(userId: string, rigId: string): Promise<void> {
-    await this.database.db
+  async revoke(userId: string, rigId: string): Promise<boolean> {
+    const [deleted] = await this.database.db
       .delete(userRigAccess)
       .where(
         and(eq(userRigAccess.userId, userId), eq(userRigAccess.rigId, rigId))
-      );
+      )
+      .returning({ userId: userRigAccess.userId });
+
+    return Boolean(deleted);
   }
 
   async find(userId: string, rigId: string): Promise<UserRigAccess | null> {
@@ -66,61 +74,108 @@ export class UserRigAccessRepository {
     return row ? UserRigAccessItem.fromRow(row) : null;
   }
 
-  async listRigsForUser(userId: string, limit = 100, offset = 0) {
+  async listRigsForUser({
+    userId,
+    page,
+    pageSize,
+  }: {
+    userId: string;
+    page: number;
+    pageSize: number;
+  }): Promise<{
+    items: ListUserRigAccessItem[];
+    total: number;
+    hasNext: boolean;
+    page: number;
+    pageSize: number;
+  }> {
+    const offset = (page - 1) * pageSize;
+
+    let totalQuery = this.database.db
+      .select({ total: sql<number>`cast(count(*) as integer)` })
+      .from(userRigAccess)
+      .where(eq(userRigAccess.userId, userId));
+
+    const [{ total }] = await totalQuery;
+
     const rows = await this.database.db
       .select({
-        userId: userRigAccess.userId,
-        rigId: userRigAccess.rigId,
-        level: userRigAccess.level,
-        assignedByUserId: userRigAccess.assignedByUserId,
-        createdAt: userRigAccess.createdAt,
-        updatedAt: userRigAccess.updatedAt,
-        rigName: rigs.name,
+        access: userRigAccess,
+        rig: rigs,
       })
       .from(userRigAccess)
       .innerJoin(rigs, eq(rigs.id, userRigAccess.rigId))
       .where(eq(userRigAccess.userId, userId))
-      .limit(limit)
+      .limit(pageSize)
       .offset(offset);
 
-    return rows.map(
-      (r) =>
-        new UserRigAccess({
-          userId: r.userId,
-          rigId: r.rigId,
-          level: r.level as UserRigAccess["level"],
-          assignedByUserId: r.assignedByUserId ?? null,
-          createdAt: r.createdAt ?? undefined,
-          updatedAt: r.updatedAt ?? undefined,
-        })
-    );
+    const items = rows.map(({ access, rig }) => {
+      const userRigAccessItem = UserRigAccessItem.fromRow(access);
+
+      return {
+        ...userRigAccessItem,
+        rig: {
+          id: rig.id,
+          name: rig.name,
+          timezone: rig.timezone,
+          uf: rig.uf as Rig["uf"],
+        },
+      } satisfies ListUserRigAccessItem;
+    });
+
+    const hasNext = page * pageSize < total;
+
+    return { items, total, hasNext, page, pageSize };
   }
 
-  async listUsersForRig(rigId: string, limit = 100, offset = 0) {
+  async listUsersForRig({
+    rigId,
+    page,
+    pageSize,
+  }: {
+    rigId: string;
+    page: number;
+    pageSize: number;
+  }): Promise<{
+    items: ListRigUsersItem[];
+    total: number;
+    hasNext: boolean;
+    page: number;
+    pageSize: number;
+  }> {
+    const offset = (page - 1) * pageSize;
+
+    const [{ total }] = await this.database.db
+      .select({ total: sql<number>`cast(count(*) as integer)` })
+      .from(userRigAccess)
+      .where(eq(userRigAccess.rigId, rigId));
+
     const rows = await this.database.db
       .select({
-        userId: users.id,
-        userName: users.name,
-        userEmail: users.email,
-        level: userRigAccess.level,
-        assignedByUserId: userRigAccess.assignedByUserId,
-        createdAt: userRigAccess.createdAt,
-        updatedAt: userRigAccess.updatedAt,
+        access: userRigAccess,
+        user: users,
       })
       .from(userRigAccess)
       .innerJoin(users, eq(users.id, userRigAccess.userId))
       .where(eq(userRigAccess.rigId, rigId))
-      .limit(limit)
+      .limit(pageSize)
       .offset(offset);
 
-    return rows.map((r) => ({
-      userId: r.userId,
-      userName: r.userName,
-      userEmail: r.userEmail,
-      level: r.level,
-      assignedByUserId: r.assignedByUserId,
-      createdAt: r.createdAt,
-      updatedAt: r.updatedAt,
-    }));
+    const items = rows.map(({ access, user }) => {
+      const userRigAccessItem = UserRigAccessItem.fromRow(access);
+
+      return {
+        ...userRigAccessItem,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
+      } satisfies ListRigUsersItem;
+    });
+
+    const hasNext = page * pageSize < total;
+
+    return { items, total, hasNext, page, pageSize };
   }
 }

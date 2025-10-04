@@ -16,11 +16,29 @@ listContracts:
         authorizer:
           name: CognitoAuthorizer
 
+getContract:
+  handler: src/main/functions/contracts/getContract.handler
+  events:
+    - httpApi:
+        path: /contracts/{contractId}
+        method: GET
+        authorizer:
+          name: CognitoAuthorizer
+
 updateContract:
   handler: src/main/functions/contracts/updateContract.handler
   events:
     - httpApi:
         path: /contracts/{contractId}
         method: PATCH
+        authorizer:
+          name: CognitoAuthorizer
+
+deleteContract:
+  handler: src/main/functions/contracts/deleteContract.handler
+  events:
+    - httpApi:
+        path: /contracts/{contractId}
+        method: DELETE
         authorizer:
           name: CognitoAuthorizer
