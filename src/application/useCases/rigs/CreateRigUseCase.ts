@@ -1,22 +1,35 @@
 import { CreateRigBody } from "@application/controllers/rigs/schemas/createRigSchema";
-import { Contract } from "@application/entities/Contract";
+import { MODULE_KEYS } from "@application/constants/moduleKeys";
 import { Rig } from "@application/entities/Rig";
+import { RoleService } from "@application/services/RoleService";
 import { RigRepository } from "@infra/database/neon/repositories/RigRepository";
 import { Injectable } from "@kernel/decorators/Injectable";
 
 @Injectable()
 export class CreateRigUseCase {
-  constructor(private readonly rigRepository: RigRepository) {}
+  constructor(
+    private readonly rigRepository: RigRepository,
+    private readonly roleService: RoleService
+  ) {}
 
-  async execute({
-    isActive,
-    name,
-    clientId,
-    contractId,
-    baseId,
-    uf,
-    timezone,
-  }: CreateRigUseCase.Input): Promise<CreateRigUseCase.Output> {
+  async execute(
+    actingUserId: string,
+    {
+      isActive,
+      name,
+      clientId,
+      contractId,
+      baseId,
+      uf,
+      timezone,
+    }: CreateRigUseCase.Input
+  ): Promise<CreateRigUseCase.Output> {
+    await this.roleService.ensureModuleAccess(
+      MODULE_KEYS.RIGS,
+      "admin",
+      actingUserId
+    );
+
     const rig = new Rig({
       isActive,
       name,

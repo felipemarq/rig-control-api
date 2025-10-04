@@ -57,6 +57,8 @@ functions:
   - ${file(./sls/functions/clients.yml)}
   - ${file(./sls/functions/contracts.yml)}
   - ${file(./sls/functions/rigs.yml)}
+  - ${file(./sls/functions/userRigAccess.yml)}
+  - ${file(./sls/functions/efficiencyDays.yml)}
 
 resources:
   - ${file(./sls/resources/UserPool.yml)}

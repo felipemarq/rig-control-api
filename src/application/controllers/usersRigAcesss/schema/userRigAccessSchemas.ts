@@ -25,8 +25,8 @@ export type RevokeUserRigAccessBody = z.infer<typeof revokeUserRigAccessSchema>;
 
 export const listUserRigAccessQuerySchema = z.object({
   userId: z.string().uuid("userId inválido"),
-  limit: z.number().int().min(1).max(200).optional(),
-  offset: z.number().int().min(0).optional(),
+  page: z.string().optional(),
+  pageSize: z.string().optional(),
 });
 export type ListUserRigAccessQuery = z.infer<
   typeof listUserRigAccessQuerySchema
@@ -34,7 +34,7 @@ export type ListUserRigAccessQuery = z.infer<
 
 export const listRigUsersQuerySchema = z.object({
   rigId: z.string().uuid("rigId inválido"),
-  limit: z.number().int().min(1).max(200).optional(),
-  offset: z.number().int().min(0).optional(),
+  page: z.string().optional(),
+  pageSize: z.string().optional(),
 });
 export type ListRigUsersQuery = z.infer<typeof listRigUsersQuerySchema>;

@@ -1,7 +1,7 @@
 // application/validation/rigSchemas.ts
 import { z } from "zod";
 
-const ufEnum = z.enum([
+export const ufEnum = z.enum([
   "AC",
   "AL",
   "AM",
