@@ -1,0 +1,8 @@
+createEfficiencyDay:
+  handler: src/main/functions/efficiency/createEfficiencyDay.handler
+  events:
+    - httpApi:
+        method: POST
+        path: /efficiency/days
+        authorizer:
+          name: CognitoAuthorizer
