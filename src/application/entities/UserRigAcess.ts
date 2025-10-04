@@ -1,6 +1,5 @@
 // application/entities/UserRigAccess.ts
-
-export type AccessLevel = "none" | "read" | "write" | "admin";
+import { AccessLevel } from "@application/types/AccessLevel";
 
 export class UserRigAccess {
   readonly userId: string; // FK -> users.id

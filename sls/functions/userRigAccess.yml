@@ -1,0 +1,44 @@
+createUserRigAccess:
+  handler: src/main/functions/userRigAccess/createUserRigAccess.handler
+  events:
+    - httpApi:
+        method: POST
+        path: /user-rig-access
+        authorizer:
+          name: CognitoAuthorizer
+
+updateUserRigAccess:
+  handler: src/main/functions/userRigAccess/updateUserRigAccess.handler
+  events:
+    - httpApi:
+        method: PATCH
+        path: /user-rig-access
+        authorizer:
+          name: CognitoAuthorizer
+
+deleteUserRigAccess:
+  handler: src/main/functions/userRigAccess/deleteUserRigAccess.handler
+  events:
+    - httpApi:
+        method: DELETE
+        path: /user-rig-access
+        authorizer:
+          name: CognitoAuthorizer
+
+listUserRigAccess:
+  handler: src/main/functions/userRigAccess/listUserRigAccess.handler
+  events:
+    - httpApi:
+        method: GET
+        path: /user-rig-access
+        authorizer:
+          name: CognitoAuthorizer
+
+listRigUsers:
+  handler: src/main/functions/userRigAccess/listRigUsers.handler
+  events:
+    - httpApi:
+        method: GET
+        path: /user-rig-access/rig-users
+        authorizer:
+          name: CognitoAuthorizer

@@ -7,11 +7,38 @@ createClient:
         authorizer:
           name: CognitoAuthorizer
 
+listClients:
+  handler: src/main/functions/clients/listClients.handler
+  events:
+    - httpApi:
+        method: GET
+        path: /clients
+        authorizer:
+          name: CognitoAuthorizer
+
+getClient:
+  handler: src/main/functions/clients/getClient.handler
+  events:
+    - httpApi:
+        method: GET
+        path: /clients/{clientId}
+        authorizer:
+          name: CognitoAuthorizer
+
 updateClient:
   handler: src/main/functions/clients/updateClient.handler
   events:
     - httpApi:
         path: /clients/{clientId}
         method: PATCH
+        authorizer:
+          name: CognitoAuthorizer
+
+deleteClient:
+  handler: src/main/functions/clients/deleteClient.handler
+  events:
+    - httpApi:
+        method: DELETE
+        path: /clients/{clientId}
         authorizer:
           name: CognitoAuthorizer

@@ -1,14 +1,12 @@
 import { MODULE_KEYS } from "@application/constants/moduleKeys";
-import { Rig } from "@application/entities/Rig";
+import { NotFoundException } from "@application/errors/http/NotFoundException";
 import { PermissionService } from "@application/services/PermissionService";
 import { RoleService } from "@application/services/RoleService";
 import { RigRepository } from "@infra/database/neon/repositories/RigRepository";
 import { Injectable } from "@kernel/decorators/Injectable";
 
-import { CreateRigUseCase } from "./CreateRigUseCase";
-
 @Injectable()
-export class UpdateRigUseCase {
+export class DeleteRigUseCase {
   constructor(
     private readonly rigRepository: RigRepository,
     private readonly roleService: RoleService,
@@ -17,17 +15,8 @@ export class UpdateRigUseCase {
 
   async execute(
     actingUserId: string,
-    {
-      rigId,
-      isActive,
-      name,
-      timezone,
-      uf,
-      baseId,
-      clientId,
-      contractId,
-    }: UpdateRigUseCase.Input
-  ): Promise<UpdateRigUseCase.Output> {
+    { rigId }: DeleteRigUseCase.Input
+  ): Promise<void> {
     await this.roleService.ensureModuleAccess(
       MODULE_KEYS.RIGS,
       "admin",
@@ -40,26 +29,16 @@ export class UpdateRigUseCase {
       "admin"
     );
 
-    const rig = new Rig({
-      contractId,
-      isActive,
-      name,
-      timezone,
-      uf,
-      baseId,
-      clientId,
-    });
+    const deleted = await this.rigRepository.delete(rigId);
 
-    const updatedRig = await this.rigRepository.update(rigId, rig);
-
-    return updatedRig;
+    if (!deleted) {
+      throw new NotFoundException("Rig not found");
+    }
   }
 }
 
-export namespace UpdateRigUseCase {
-  export type Input = CreateRigUseCase.Input & {
+export namespace DeleteRigUseCase {
+  export type Input = {
     rigId: string;
   };
-
-  export type Output = Rig;
 }
