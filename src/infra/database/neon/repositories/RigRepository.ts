@@ -1,16 +1,7 @@
 import { Injectable } from "@kernel/decorators/Injectable";
 import { DatabaseService } from "..";
 import { bases, clients, contracts, rigs } from "../schema";
-import {
-  SQL,
-  and,
-  asc,
-  desc,
-  eq,
-  ilike,
-  inArray,
-  sql,
-} from "drizzle-orm";
+import { SQL, and, asc, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 import { Rig } from "@application/entities/Rig";
 import { RigItem } from "../items/RigItem";
 import { ListRigQuery } from "@application/controllers/rigs/schemas/listRigQuerySchema";
@@ -141,7 +132,8 @@ export class RigRepository {
 
     const rows = await (whereExpr
       ? baseRowsQuery.where(whereExpr)
-      : baseRowsQuery)
+      : baseRowsQuery
+    )
       .orderBy(orderMain, ...orderTiebreakers)
       .limit(limit)
       .offset(offset);

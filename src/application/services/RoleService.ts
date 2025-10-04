@@ -1,5 +1,8 @@
 import { ForbiddenException } from "@application/errors/http/ForbiddenException";
-import { AccessLevel, hasSufficientAccess } from "@application/types/AccessLevel";
+import {
+  AccessLevel,
+  hasSufficientAccess,
+} from "@application/types/AccessLevel";
 import { Injectable } from "@kernel/decorators/Injectable";
 
 import { RolePermissionRepository } from "@infra/database/neon/repositories/RolePermissionRepository";
